@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cadastro de Currículos</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23142e6b'/%3E%3Ctext x='32' y='43' font-size='34' text-anchor='middle' fill='white' font-family='Arial'%3EB%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">B</div>
+        <div class="brand-text">
+          <p class="eyebrow">Betinhos Executive Service</p>
+          <h1>Cadastro de Currículos</h1>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <div id="modeBox" class="record-id">
+          <span>Ambiente</span>
+          <strong id="modeText">Verificando...</strong>
+        </div>
+        <button id="submitButton" class="primary-action" type="submit" form="curriculoForm">
+          <span id="submitButtonText">Enviar cadastro</span>
+        </button>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Seções do formulário">
+      <button class="tab is-active" type="button" data-section="dados" aria-current="page">
+        <span class="tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8 5h8M8 9h8M8 13h5M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"></path></svg>
+        </span>
+        <span class="tab-label">Dados</span>
+      </button>
+      <button class="tab" type="button" data-section="profissional">
+        <span class="tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-9 0h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z"></path></svg>
+        </span>
+        <span class="tab-label">Profissional</span>
+      </button>
+      <button class="tab" type="button" data-section="arquivo">
+        <span class="tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm0 0v5h5M9 15h6M9 12h6"></path></svg>
+        </span>
+        <span class="tab-label">Arquivo</span>
+      </button>
+    </nav>
+
+    <main class="content">
+      <form id="curriculoForm" novalidate>
+        <section id="dados" class="panel is-active" data-panel="dados">
+          <div class="section-head">
+            <h2>Dados do candidato</h2>
+            <p>Informações básicas para identificar e contatar o candidato.</p>
+          </div>
+
+          <section class="form-section">
+            <div class="form-section-title" data-step="01">
+              <div>
+                <h3>Identificação</h3>
+                <p>Campos mínimos para criação do registro.</p>
+              </div>
+            </div>
+            <div class="form-grid">
+              <label class="field span-2 required">
+                <span>Nome completo</span>
+                <input id="nomeCompleto" name="nomeCompleto" type="text" autocomplete="name" required>
+              </label>
+              <label class="field">
+                <span>CPF</span>
+                <input id="cpf" name="cpf" type="text" inputmode="numeric" maxlength="14" autocomplete="off">
+              </label>
+              <label class="field">
+                <span>Telefone</span>
+                <input id="telefone" name="telefone" type="tel" autocomplete="tel">
+              </label>
+              <label class="field">
+                <span>WhatsApp</span>
+                <input id="whatsapp" name="whatsapp" type="tel" autocomplete="tel">
+              </label>
+              <label class="field span-2">
+                <span>E-mail</span>
+                <input id="email" name="email" type="email" autocomplete="email">
+              </label>
+              <label class="field">
+                <span>Cidade</span>
+                <input id="cidade" name="cidade" type="text" autocomplete="address-level2">
+              </label>
+              <label class="field">
+                <span>Estado</span>
+                <input id="estado" name="estado" type="text" maxlength="2" autocomplete="address-level1">
+              </label>
+            </div>
+          </section>
+        </section>
+
+        <section id="profissional" class="panel" data-panel="profissional">
+          <div class="section-head">
+            <h2>Perfil profissional</h2>
+            <p>Experiência, disponibilidade e triagem operacional.</p>
+          </div>
+
+          <section class="form-section">
+            <div class="form-section-title" data-step="02">
+              <div>
+                <h3>Experiência e interesse</h3>
+                <p>Use texto objetivo. Isso vira histórico de análise.</p>
+              </div>
+            </div>
+            <div class="form-grid">
+              <label class="field span-2 required">
+                <span>Cargo de interesse</span>
+                <input id="cargoInteresse" name="cargoInteresse" type="text" required>
+              </label>
+              <label class="field">
+                <span>Último cargo</span>
+                <input id="ultimoCargo" name="ultimoCargo" type="text">
+              </label>
+              <label class="field">
+                <span>Última empresa</span>
+                <input id="ultimaEmpresa" name="ultimaEmpresa" type="text">
+              </label>
+              <label class="field">
+                <span>Pretensão salarial</span>
+                <input id="pretensaoSalarial" name="pretensaoSalarial" type="number" min="0" step="0.01">
+              </label>
+              <label class="field">
+                <span>Nota</span>
+                <input id="nota" name="nota" type="number" min="0" max="10" step="1" inputmode="numeric">
+              </label>
+              <label class="field">
+                <span>Disponibilidade</span>
+                <select id="disponibilidade" name="disponibilidade"></select>
+              </label>
+              <label class="field">
+                <span>Categoria CNH</span>
+                <select id="categoriaCnh" name="categoriaCnh"></select>
+              </label>
+              <label class="toggle-field">
+                <input id="experienciaExecutivo" name="experienciaExecutivo" type="checkbox">
+                <span>Experiência com executivo</span>
+              </label>
+              <label class="toggle-field">
+                <input id="cursoMopp" name="cursoMopp" type="checkbox">
+                <span>Curso MOPP</span>
+              </label>
+              <label class="field span-2">
+                <span>Experiência</span>
+                <textarea id="experiencia" name="experiencia" rows="5"></textarea>
+              </label>
+              <label class="field span-2">
+                <span>Observações internas</span>
+                <textarea id="observacoes" name="observacoes" rows="5"></textarea>
+              </label>
+            </div>
+          </section>
+        </section>
+
+        <section id="arquivo" class="panel" data-panel="arquivo">
+          <div class="section-head">
+            <h2>Origem e arquivo</h2>
+            <p>Registro da fonte e currículo anexado.</p>
+          </div>
+
+          <section class="form-section">
+            <div class="form-section-title" data-step="03">
+              <div>
+                <h3>Triagem e documento</h3>
+                <p>O arquivo será enviado ao Flow quando a URL estiver configurada.</p>
+              </div>
+            </div>
+            <div class="form-grid">
+              <label class="field">
+                <span>Origem do currículo</span>
+                <select id="origemCurriculo" name="origemCurriculo"></select>
+              </label>
+              <label class="field">
+                <span>Status do currículo</span>
+                <select id="statusCurriculo" name="statusCurriculo"></select>
+              </label>
+              <label class="field span-2">
+                <span>Link do currículo</span>
+                <input id="linkCurriculo" name="linkCurriculo" type="url">
+              </label>
+              <label class="field span-2 upload-field">
+                <span>Arquivo do currículo</span>
+                <input id="arquivoCurriculo" name="arquivoCurriculo" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                <small id="fileHint">PDF, Word ou imagem. Máximo recomendado: 10 MB.</small>
+              </label>
+              <section id="filePreview" class="file-preview span-2" aria-live="polite" hidden></section>
+            </div>
+          </section>
+
+          <div class="footer-actions">
+            <button id="clearButton" type="button" class="secondary-action">Limpar</button>
+            <button class="primary-action" type="submit">
+              <span>Enviar cadastro</span>
+            </button>
+          </div>
+        </section>
+      </form>
+    </main>
+
+    <aside id="toastStack" class="toast-stack" aria-live="polite"></aside>
+
+    <div id="loadingOverlay" class="overlay" hidden>
+      <div class="dialog">
+        <div class="spinner"></div>
+        <strong>Salvando...</strong>
+      </div>
+    </div>
+
+    <div id="successOverlay" class="overlay" hidden>
+      <div class="dialog success-dialog">
+        <strong>Cadastro enviado</strong>
+        <p id="successMessage">Currículo registrado com sucesso.</p>
+        <button id="closeSuccess" type="button" class="primary-action">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
