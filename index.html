@@ -78,33 +78,32 @@ p {
 }
 
 .app-shell {
-  width: min(100%, 1440px);
+  width: min(100%, 1680px);
   min-height: 100dvh;
   display: grid;
-  grid-template-columns: 76px minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
   grid-template-areas:
-    "topbar topbar"
-    "tabs content";
-  gap: 12px;
+    "topbar"
+    "tabs"
+    "content";
+  gap: 8px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 8px;
 }
 
 .topbar {
   grid-area: topbar;
-  min-height: 76px;
+  min-height: 52px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
-  padding: 12px 14px;
+  gap: 12px;
+  padding: 8px 10px;
   border: 1px solid rgb(148 163 184 / 0.3);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-sm);
   background: #ffffff;
   box-shadow: var(--shadow-shell);
-  position: sticky;
-  top: 10px;
   z-index: 70;
 }
 
@@ -112,12 +111,12 @@ p {
   min-width: 260px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 9px;
 }
 
 .brand-mark {
-  width: 46px;
-  height: 46px;
+  width: 34px;
+  height: 34px;
   flex: 0 0 auto;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -140,20 +139,20 @@ p {
 
 .eyebrow {
   color: #7f8ea3;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
 }
 
 h1 {
   color: #0f172a;
-  font-size: 21px;
+  font-size: 16px;
   line-height: 1.1;
   font-weight: 760;
 }
 
 h2 {
   color: var(--text);
-  font-size: 24px;
+  font-size: 17px;
   line-height: 1.14;
   font-weight: 780;
 }
@@ -167,9 +166,9 @@ h3 {
 
 .top-actions {
   display: flex;
-  align-items: end;
+  align-items: center;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -199,14 +198,14 @@ h3 {
 
 .primary-action,
 .secondary-action {
-  min-height: 42px;
+  min-height: 34px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 0 16px;
+  padding: 0 12px;
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 790;
   transition: transform 170ms var(--ease-out), box-shadow 170ms var(--ease-out), border-color 170ms var(--ease-out);
 }
@@ -232,49 +231,32 @@ h3 {
 
 .tabs {
   grid-area: tabs;
-  position: sticky;
-  top: 112px;
   z-index: 90;
   align-self: start;
-  width: 76px;
-  display: grid;
-  align-content: start;
-  gap: 8px;
-  padding: 10px;
+  width: 100%;
+  display: flex;
+  gap: 6px;
+  padding: 6px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-sm);
   background: rgb(255 255 255 / 0.98);
   box-shadow: var(--shadow-shell);
-  transition: width 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
-  overflow-x: hidden;
-}
-
-.tabs:hover,
-.tabs:has(.tab:focus-visible) {
-  width: 218px;
-  box-shadow: 0 18px 42px rgb(22 35 59 / 0.16), 0 0 0 1px rgb(33 89 210 / 0.06);
+  overflow-x: auto;
 }
 
 .tabs::before {
-  content: "MENU";
-  display: block;
-  min-height: 28px;
-  padding: 8px 0 6px;
-  color: #8fa0bb;
-  font-size: 11px;
-  font-weight: 820;
-  letter-spacing: 0.12em;
-  border-bottom: 1px solid rgb(226 232 240);
-  text-align: center;
+  display: none;
 }
 
 .tab {
-  min-height: 50px;
-  width: 100%;
+  min-height: 34px;
+  width: auto;
+  min-width: 150px;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 8px;
+  padding: 0 10px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: transparent;
@@ -284,8 +266,8 @@ h3 {
 }
 
 .tab-icon {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   flex: 0 0 auto;
   display: grid;
   place-items: center;
@@ -294,8 +276,8 @@ h3 {
 }
 
 .tab-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
@@ -304,7 +286,7 @@ h3 {
 }
 
 .tab-label {
-  opacity: 0;
+  opacity: 1;
   white-space: nowrap;
   color: currentColor;
   font-size: 13px;
@@ -312,15 +294,9 @@ h3 {
   transition: opacity 160ms var(--ease-out);
 }
 
-.tabs:hover .tab-label,
-.tabs:has(.tab:focus-visible) .tab-label {
-  opacity: 1;
-}
-
 .tab:hover {
   background: #f2f6ff;
   color: var(--text);
-  transform: translateX(4px);
 }
 
 .tab.is-active {
@@ -335,14 +311,14 @@ h3 {
   position: relative;
   z-index: 1;
   border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-sm);
   background: #ffffff;
   box-shadow: var(--shadow-panel);
 }
 
 .panel {
   display: none;
-  padding: 22px;
+  padding: 12px;
 }
 
 .panel.is-active {
@@ -351,9 +327,7 @@ h3 {
 }
 
 .section-head {
-  display: grid;
-  gap: 5px;
-  margin-bottom: 14px;
+  display: none;
 }
 
 .section-head p {
@@ -363,8 +337,8 @@ h3 {
 
 .form-section {
   display: grid;
-  gap: 14px;
-  padding: 16px;
+  gap: 10px;
+  padding: 10px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--surface);
@@ -374,15 +348,15 @@ h3 {
 .form-section-title {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding-bottom: 10px;
+  gap: 8px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--line);
 }
 
 .form-section-title::before {
   content: attr(data-step);
-  min-width: 24px;
-  height: 20px;
+  min-width: 22px;
+  height: 18px;
   border: 1px solid var(--line-strong);
   border-radius: 999px;
   display: inline-grid;
@@ -395,10 +369,11 @@ h3 {
 
 .form-section-title > div {
   display: grid;
-  gap: 4px;
+  gap: 2px;
 }
 
 .form-section-title p {
+  display: none;
   max-width: 620px;
   color: var(--muted);
   font-size: 12px;
@@ -408,7 +383,7 @@ h3 {
 .form-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
   align-items: start;
 }
 
@@ -421,7 +396,7 @@ h3 {
   grid-column: span 3;
   display: grid;
   gap: 7px;
-  min-height: 78px;
+  min-height: 72px;
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
@@ -438,25 +413,29 @@ h3 {
   border-color: var(--accent);
   background: #ffffff;
   box-shadow: var(--shadow-focus), var(--shadow-control);
-  transform: translateY(-1px);
+}
+
+.field.has-error {
+  border-color: var(--danger);
+  background: #fff7f8;
 }
 
 .field input,
 .field select,
 .field textarea {
   width: 100%;
-  min-height: 40px;
+  min-height: 38px;
   border: 1px solid var(--line);
   border-radius: var(--radius-xs);
   background: #ffffff;
   color: var(--text);
   outline: 0;
-  padding: 8px 10px;
+  padding: 7px 10px;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7);
 }
 
 .field textarea {
-  min-height: 92px;
+  min-height: 82px;
   resize: vertical;
   line-height: 1.42;
 }
@@ -474,6 +453,12 @@ h3 {
   box-shadow: var(--shadow-focus);
 }
 
+.field.has-error input,
+.field.has-error select,
+.field.has-error textarea {
+  border-color: var(--danger);
+}
+
 .span-2 {
   grid-column: span 6;
 }
@@ -483,7 +468,7 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  min-height: 78px;
+  min-height: 72px;
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
@@ -544,12 +529,12 @@ h3 {
 }
 
 .upload-dropzone {
-  min-height: 30px;
+  min-height: 70px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+  padding: 12px 14px;
   border: 1px dashed var(--line-strong);
   border-radius: var(--radius-sm);
   background: #ffffff;
@@ -879,39 +864,143 @@ h3 {
 }
 
 @media (max-width: 760px) {
+  html,
+  body {
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
   .app-shell {
-    padding: 8px;
-    gap: 8px;
+    width: 100%;
+    min-height: 100dvh;
+    padding: 6px;
+    gap: 6px;
   }
 
   .topbar {
-    align-items: stretch;
-    flex-direction: column;
-    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 110;
+    align-items: center;
+    flex-direction: row;
+    gap: 8px;
+    padding: 7px;
+    border-radius: var(--radius-sm);
   }
 
   .brand {
     min-width: 0;
+    flex: 1 1 auto;
+    gap: 8px;
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+  }
+
+  .brand-text {
+    min-width: 0;
+  }
+
+  .eyebrow {
+    display: none;
+  }
+
+  h1 {
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .top-actions {
+    flex: 0 0 auto;
     justify-content: stretch;
+    gap: 6px;
   }
 
-  .top-actions > * {
-    flex: 1 1 100%;
+  .record-id {
+    display: none;
+  }
+
+  .primary-action,
+  .secondary-action {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .tabs {
+    position: sticky;
+    top: 50px;
+    z-index: 100;
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    min-width: 112px;
+    min-height: 32px;
+    gap: 7px;
+    padding: 0 8px;
+  }
+
+  .tab-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+  }
+
+  .tab-icon svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .tab-label {
+    font-size: 12px;
+  }
+
+  .content {
+    border-radius: var(--radius-sm);
   }
 
   .panel {
-    padding: 14px;
+    padding: 8px;
+  }
+
+  .form-section {
+    gap: 9px;
+    padding: 8px;
+    border-radius: var(--radius-sm);
   }
 
   .form-section-title {
+    gap: 7px;
     align-items: flex-start;
+    padding-bottom: 7px;
+  }
+
+  .form-section-title::before {
+    min-width: 20px;
+    height: 18px;
+    font-size: 10px;
+  }
+
+  h3 {
+    font-size: 13px;
   }
 
   .form-grid {
     grid-template-columns: 1fr;
+    gap: 7px;
   }
 
   .field,
@@ -921,14 +1010,83 @@ h3 {
     grid-column: auto;
   }
 
+  .field {
+    min-height: 68px;
+    padding: 9px;
+  }
+
+  .field span,
+  .toggle-field span {
+    font-size: 10px;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    min-height: 40px;
+    font-size: 16px;
+  }
+
+  .field textarea {
+    min-height: 96px;
+  }
+
+  .toggle-field {
+    min-height: 58px;
+  }
+
   .upload-dropzone {
     grid-template-columns: 1fr;
+    min-height: 82px;
+    gap: 8px;
+    padding: 10px;
     justify-items: start;
   }
 
-  .upload-icon {
-    width: 50px;
-    height: 50px;
+  .upload-button {
+    width: 100%;
+  }
+
+  .file-preview {
+    min-height: 0;
+    padding: 9px;
+  }
+
+  .file-preview-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .file-preview-clear {
+    width: 100%;
+  }
+
+  .file-preview-body {
+    min-height: 160px;
+  }
+
+  .file-preview-body img,
+  .file-preview-body iframe {
+    height: 220px;
+  }
+
+  .toast-stack {
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+  }
+
+  .toast {
+    width: 100%;
+  }
+
+  .overlay {
+    padding: 10px;
+  }
+
+  .dialog {
+    width: 100%;
+    padding: 18px;
   }
 }
   </style>
@@ -1058,7 +1216,7 @@ h3 {
               </label>
               <label class="field">
                 <span>Nota</span>
-                <input id="nota" name="nota" type="number" min="0" max="10" step="0.1" inputmode="decimal">
+                <input id="nota" name="nota" type="text" inputmode="decimal" autocomplete="off">
               </label>
               <label class="field">
                 <span>Disponibilidade</span>
@@ -1282,6 +1440,8 @@ h3 {
     el.form.addEventListener("submit", handleSubmit);
     el.form.addEventListener("input", saveDraft);
     el.form.addEventListener("change", saveDraft);
+    el.form.addEventListener("input", clearFieldError);
+    el.form.addEventListener("change", clearFieldError);
     el.closeSuccess.addEventListener("click", () => {
       el.successOverlay.hidden = true;
     });
@@ -1384,7 +1544,7 @@ h3 {
     event.preventDefault();
     if (state.saving) return;
 
-    if (!validateForm()) return;
+    if (!validateFormDetailed()) return;
 
     state.saving = true;
     setLoading(true);
@@ -1409,7 +1569,7 @@ h3 {
       closeWebResourceAfterSubmit();
     } catch (error) {
       console.error(error);
-      toast(error.message || "Falha ao enviar cadastro.", "error", 9000);
+      toast(buildSubmitErrorMessage(error), "error", 12000);
     } finally {
       state.saving = false;
       setLoading(false);
@@ -1436,6 +1596,104 @@ h3 {
     }
 
     return true;
+  }
+
+  function validateFormDetailed() {
+    clearValidationErrors();
+
+    const invalid = findInvalidControl();
+    if (invalid) {
+      showFieldError(invalid.control, invalid.message);
+      return false;
+    }
+
+    const file = el.arquivoCurriculo.files[0];
+    if (file && file.size > 10 * 1024 * 1024) {
+      showFieldError(el.arquivoCurriculo, `Arquivo do currículo inválido: ${file.name} tem ${formatBytes(file.size)}. Limite máximo: 10 MB.`);
+      return false;
+    }
+
+    return true;
+  }
+
+  function clearValidationErrors() {
+    el.form.querySelectorAll(".field.has-error").forEach((field) => {
+      field.classList.remove("has-error");
+    });
+  }
+
+  function clearFieldError(event) {
+    event.target.closest?.(".field.has-error")?.classList.remove("has-error");
+  }
+
+  function findInvalidControl() {
+    const requiredControls = [...el.form.querySelectorAll("[required]")];
+    for (const control of requiredControls) {
+      if (!value(control.id)) {
+        return {
+          control,
+          message: `${getControlLabel(control)} não foi preenchido. Esse campo é obrigatório.`
+        };
+      }
+    }
+
+    const nota = $("nota");
+    const rawNota = value("nota");
+    const parsedNota = parseDecimal(rawNota);
+    if (rawNota && !parsedNota) {
+      return {
+        control: nota,
+        message: "Nota inválida. Use número de 0 a 10 com decimal opcional, exemplo: 8,5 ou 8.5."
+      };
+    }
+
+    if (parsedNota && (parsedNota.value < 0 || parsedNota.value > 10)) {
+      return {
+        control: nota,
+        message: "Nota inválida. O valor precisa estar entre 0 e 10."
+      };
+    }
+
+    const nativeInvalid = [...el.form.elements].find((control) => {
+      if (!control.name || control.type === "file") return false;
+      return typeof control.checkValidity === "function" && !control.checkValidity();
+    });
+
+    if (nativeInvalid) {
+      return {
+        control: nativeInvalid,
+        message: buildNativeValidationMessage(nativeInvalid)
+      };
+    }
+
+    return null;
+  }
+
+  function showFieldError(control, message) {
+    const field = control.closest(".field");
+    const panel = control.closest(".panel");
+    if (field) field.classList.add("has-error");
+    if (panel) activatePanel(panel.dataset.panel);
+    control.focus({ preventScroll: false });
+    toast(message, "error", 12000);
+  }
+
+  function buildNativeValidationMessage(control) {
+    const label = getControlLabel(control);
+    const validity = control.validity;
+
+    if (validity.typeMismatch) return `${label} inválido. Verifique o formato preenchido.`;
+    if (validity.rangeUnderflow) return `${label} inválido. Valor mínimo: ${control.min}.`;
+    if (validity.rangeOverflow) return `${label} inválido. Valor máximo: ${control.max}.`;
+    if (validity.stepMismatch) return `${label} inválido. Use um valor compatível com o intervalo permitido.`;
+    if (validity.badInput) return `${label} inválido. Use apenas números válidos.`;
+    if (validity.patternMismatch) return `${label} inválido. O texto não segue o formato esperado.`;
+
+    return `${label} inválido. ${control.validationMessage || "Revise o valor preenchido."}`;
+  }
+
+  function getControlLabel(control) {
+    return control.closest(".field")?.querySelector("span")?.textContent?.replace("*", "").trim() || control.name || control.id || "Campo";
   }
 
   function buildDataversePayload() {
@@ -1858,8 +2116,33 @@ h3 {
   }
 
   function numberValue(id) {
-    const raw = value(id).replace(",", ".");
-    return raw === "" ? null : Number(raw);
+    const raw = value(id);
+    if (raw === "") return null;
+    const parsed = parseDecimal(raw);
+    return parsed ? parsed.value : Number(raw.replace(",", "."));
+  }
+
+  function parseDecimal(raw) {
+    const normalized = String(raw || "").trim().replace(",", ".");
+    if (!/^\d+(\.\d+)?$/.test(normalized)) return null;
+    const value = Number(normalized);
+    return Number.isFinite(value) ? { value } : null;
+  }
+
+  function buildSubmitErrorMessage(error) {
+    const rawMessage = error?.message || String(error || "") || "Falha ao enviar cadastro.";
+    const fieldHint = findFieldHintInError(rawMessage);
+    return fieldHint ? `${fieldHint}: ${rawMessage}` : rawMessage;
+  }
+
+  function findFieldHintInError(message) {
+    const normalized = String(message || "").toLowerCase();
+    const entries = Object.entries(CONFIG.fields);
+    const found = entries.find(([, logicalName]) => normalized.includes(String(logicalName).toLowerCase()));
+    if (!found) return "";
+
+    const control = document.querySelector(`[name="${found[0]}"], #${found[0]}`);
+    return control ? `Erro no campo ${getControlLabel(control)}` : `Erro no campo Dataverse ${found[1]}`;
   }
 
   function setLoading(active) {
@@ -1918,7 +2201,7 @@ h3 {
           // Cross-frame ou host sem botão acessível.
         }
       });
-    }, 1000);
+    }, 2000);
   }
 
   function toast(message, type = "success", timeout = 4500) {

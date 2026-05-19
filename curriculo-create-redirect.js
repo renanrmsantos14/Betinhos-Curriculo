@@ -7,10 +7,7 @@
   };
 
   const NAV_OPTIONS = {
-    target: 2,
-    position: 1,
-    width: 1200,
-    height: 900
+    target: 1
   };
 
   function getXrm() {
