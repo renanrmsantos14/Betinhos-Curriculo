@@ -104,6 +104,8 @@ p {
   border-radius: var(--radius-sm);
   background: #ffffff;
   box-shadow: var(--shadow-shell);
+  position: sticky;
+  top: 0;
   z-index: 70;
 }
 
@@ -879,8 +881,6 @@ h3 {
   }
 
   .topbar {
-    position: sticky;
-    top: 0;
     z-index: 110;
     align-items: center;
     flex-direction: row;
@@ -1311,7 +1311,10 @@ h3 {
 
   const CONFIG = {
     tableLogicalName: "new_curriculo",
-    flowUploadUrl: "https://6847878f5a6fe08baed6d7119975e3.e1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/78e18b7b1ecb4a0c93d3e8458ca69d38/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=VMrBVOoTdjjyjiCcLnvZhawOckboqmG-nZXOinHNGOY",
+    flowUploadUrls: {
+      dev: "https://25a2ab78cf07ee41a124457aa2c29a.ea.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d9dd1bd08123419f947985e36ee22ffa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=g4g9Lj5lvTL-Z-3AdUNq7_Eelrkxg8wmCaIFz-V8sKc",
+      prod: "https://6847878f5a6fe08baed6d7119975e3.e1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/78e18b7b1ecb4a0c93d3e8458ca69d38/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=VMrBVOoTdjjyjiCcLnvZhawOckboqmG-nZXOinHNGOY"
+    },
     fields: {
       nomeCompleto: "new_nomecompleto",
       cpf: "new_cpf",
@@ -1535,6 +1538,30 @@ h3 {
     }
 
     return "TEST";
+  }
+
+  function resolveEnvironmentKey() {
+    const context = state.xrm?.Utility?.getGlobalContext?.();
+    const clientUrl = context?.getClientUrl?.() || window.location.origin;
+    const currentHost = getHostFromUrl(clientUrl);
+    const currentAppId = getQueryParam("appid", window.location.href);
+
+    if ((currentAppId && isSameGuid(currentAppId, ENVIRONMENT_HINTS.dev.appId)) ||
+      isSameHost(currentHost, ENVIRONMENT_HINTS.dev.host)) {
+      return "dev";
+    }
+
+    if ((currentAppId && isSameGuid(currentAppId, ENVIRONMENT_HINTS.prod.appId)) ||
+      isSameHost(currentHost, ENVIRONMENT_HINTS.prod.host)) {
+      return "prod";
+    }
+
+    return "";
+  }
+
+  function resolveFlowUploadUrl() {
+    const environmentKey = resolveEnvironmentKey();
+    return environmentKey ? CONFIG.flowUploadUrls[environmentKey] || "" : "";
   }
 
   function activatePanel(section) {
@@ -1830,10 +1857,11 @@ h3 {
       return { uploaded: false, message: "Currículo registrado sem arquivo anexado." };
     }
 
-    if (!CONFIG.flowUploadUrl) {
+    const flowUploadUrl = resolveFlowUploadUrl();
+    if (!flowUploadUrl) {
       return {
         uploaded: false,
-        message: "Currículo registrado. Upload pendente: configure a URL do Flow em CONFIG.flowUploadUrl."
+        message: "Currículo registrado. Upload pendente: ambiente não identificado para escolher o Flow."
       };
     }
 
@@ -1854,7 +1882,7 @@ h3 {
       uploadedAt: new Date().toISOString()
     };
 
-    const response = await fetch(CONFIG.flowUploadUrl, {
+    const response = await fetch(flowUploadUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(flowPayload)
