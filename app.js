@@ -18,6 +18,7 @@
       ultimaEmpresa: "new_ultimaempresa",
       pretensaoSalarial: "new_pretensaosalarial",
       nota: "new_nota",
+      indicadoPor: "new_indicadopor",
       disponibilidade: "new_disponibilidade",
       categoriaCnh: "new_categoriacnh",
       origemCurriculo: "new_origemcurriculo",
@@ -185,6 +186,9 @@
       fillOptions();
       activatePanel("dados");
       toast(submission.toastMessage, "success");
+      notifyHostSubmitted();
+      refreshHostGrid();
+      closeWebResourceAfterSubmit();
     } catch (error) {
       console.error(error);
       toast(error.message || "Falha ao enviar cadastro.", "error", 9000);
@@ -232,6 +236,7 @@
       [f.ultimaEmpresa]: value("ultimaEmpresa"),
       [f.pretensaoSalarial]: numberValue("pretensaoSalarial"),
       [f.nota]: numberValue("nota"),
+      [f.indicadoPor]: value("indicadoPor"),
       [f.disponibilidade]: optionValue("disponibilidade"),
       [f.categoriaCnh]: optionValue("categoriaCnh"),
       [f.origemCurriculo]: optionValue("origemCurriculo"),
@@ -345,6 +350,7 @@
       candidateName: payload[CONFIG.fields.nomeCompleto] || "",
       candidateEmail: payload[CONFIG.fields.email] || "",
       cargoInteresse: payload[CONFIG.fields.cargoInteresse] || "",
+      indicadoPor: payload[CONFIG.fields.indicadoPor] || "",
       uploadedBy: getCurrentUserName(),
       uploadedAt: new Date().toISOString()
     };
@@ -592,6 +598,61 @@
 
   function setLoading(active) {
     el.loadingOverlay.hidden = !active;
+  }
+
+  function refreshHostGrid() {
+    const scopes = [window.parent, window.top, window.opener].filter(Boolean);
+
+    for (const scope of scopes) {
+      try {
+        const grid = scope.Xrm?.Page?.getControl?.("grid");
+        if (grid && typeof grid.refresh === "function") {
+          grid.refresh();
+          return true;
+        }
+      } catch (_) {
+        continue;
+      }
+    }
+
+    return false;
+  }
+
+  function notifyHostSubmitted() {
+    const message = {
+      type: "betinhos-curriculo-submitted",
+      tableLogicalName: CONFIG.tableLogicalName,
+      submittedAt: new Date().toISOString()
+    };
+
+    [window.parent, window.top, window.opener].filter(Boolean).forEach((target) => {
+      try {
+        target.postMessage(message, "*");
+      } catch (_) {
+        // Ignora hosts que bloqueiam postMessage.
+      }
+    });
+  }
+
+  function closeWebResourceAfterSubmit() {
+    window.setTimeout(() => {
+      try {
+        window.close();
+      } catch (_) {
+        // O host do Model-driven App pode bloquear fechamento direto.
+      }
+
+      [window.parent, window.top].filter(Boolean).forEach((scope) => {
+        try {
+          const closeButton = scope.document.querySelector(
+            'button[aria-label="Close"], button[aria-label="Fechar"], [data-id="dialogCloseIconButton"]'
+          );
+          closeButton?.click?.();
+        } catch (_) {
+          // Cross-frame ou host sem botão acessível.
+        }
+      });
+    }, 1000);
   }
 
   function toast(message, type = "success", timeout = 4500) {

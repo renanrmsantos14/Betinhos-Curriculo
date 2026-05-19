@@ -2,7 +2,7 @@
   "use strict";
 
   const CONFIG = {
-    webResourceName: "new_cadastro_curriculo",
+    webResourceName: "new_TelaCurriculo",
     entityLogicalName: "new_curriculo"
   };
 
@@ -102,8 +102,45 @@
     )}&data=${encodeURIComponent(buildPayloadData())}`;
   }
 
-  function openFromCreateCommand() {
-    return openWebResource();
+  function refreshCommandHost(primaryControl) {
+    safeCall(() => {
+      if (primaryControl && typeof primaryControl.refresh === "function") {
+        primaryControl.refresh();
+        return true;
+      }
+
+      const grid = primaryControl && typeof primaryControl.getGrid === "function" ? primaryControl : null;
+      if (grid && typeof grid.refresh === "function") {
+        grid.refresh();
+        return true;
+      }
+
+      return false;
+    });
+
+    safeCall(() => getXrm()?.Page?.getControl?.("grid")?.refresh?.());
+  }
+
+  function listenForSubmittedMessage(primaryControl) {
+    const handler = (event) => {
+      if (event?.data?.type !== "betinhos-curriculo-submitted") return;
+      refreshCommandHost(primaryControl);
+      window.removeEventListener("message", handler);
+    };
+
+    window.addEventListener("message", handler);
+    window.setTimeout(() => window.removeEventListener("message", handler), 120000);
+  }
+
+  function openFromCreateCommand(primaryControl) {
+    listenForSubmittedMessage(primaryControl);
+    const result = openWebResource();
+    if (result && typeof result.finally === "function") {
+      result.finally(() => refreshCommandHost(primaryControl));
+    } else {
+      refreshCommandHost(primaryControl);
+    }
+    return result;
   }
 
   function openFromCreateForm(executionContext) {

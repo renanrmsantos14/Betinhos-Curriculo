@@ -77,6 +77,8 @@
     stringField("new_ultimocargo", "new_UltimoCargo", "Último cargo", 120),
     stringField("new_ultimaempresa", "new_UltimaEmpresa", "Última empresa", 150),
     moneyField("new_pretensaosalarial", "new_PretensaoSalarial", "Pretensão salarial"),
+    decimalField("new_nota", "new_Nota", "Nota", 0, 10, 1),
+    stringField("new_indicadopor", "new_IndicadoPor", "Indicado por", 200),
     picklistField("new_disponibilidade", "new_Disponibilidade", "Disponibilidade", OPTION_VALUES.disponibilidade),
     picklistField("new_categoriacnh", "new_CategoriaCNH", "Categoria CNH", OPTION_VALUES.cnh),
     picklistField("new_origemcurriculo", "new_OrigemCurriculo", "Origem do currículo", OPTION_VALUES.origem),
@@ -347,6 +349,21 @@
         MaxValue: 1000000,
         Precision: 2,
         PrecisionSource: 1
+      }
+    };
+  }
+
+  function decimalField(logicalName, schemaName, displayName, minValue, maxValue, precision) {
+    return {
+      logicalName,
+      metadata: {
+        "@odata.type": "Microsoft.Dynamics.CRM.DecimalAttributeMetadata",
+        SchemaName: schemaName,
+        DisplayName: label(displayName),
+        RequiredLevel: requiredLevel("None"),
+        MinValue: minValue,
+        MaxValue: maxValue,
+        Precision: precision
       }
     };
   }

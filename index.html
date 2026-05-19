@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cadastro de CurrÃ­culos</title>
+  <title>Cadastro de Currículos</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23142e6b'/%3E%3Ctext x='32' y='43' font-size='34' text-anchor='middle' fill='white' font-family='Arial'%3EB%3C/text%3E%3C/svg%3E">
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
@@ -118,14 +118,18 @@ p {
 .brand-mark {
   width: 46px;
   height: 46px;
-  display: grid;
-  place-items: center;
-  border: 1px solid #1f3c7f;
-  border-radius: 12px;
-  background: #142e6b;
-  color: #ffffff;
-  font-size: 22px;
-  font-weight: 850;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .brand-text {
@@ -171,7 +175,7 @@ h3 {
 
 .record-id {
   display: grid;
-  gap: 6px;
+  gap: 2px;
   min-width: 190px;
 }
 
@@ -185,7 +189,7 @@ h3 {
 }
 
 .record-id strong {
-  min-height: 40px;
+  min-height: 10px;
   display: inline-flex;
   align-items: center;
   color: #111827;
@@ -526,19 +530,92 @@ h3 {
   color: var(--danger);
 }
 
+.upload-field {
+  gap: 10px;
+}
+
 .upload-field input[type="file"] {
-  padding: 8px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+
+.upload-dropzone {
+  min-height: 30px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  box-shadow: var(--shadow-control);
+  transition:
+    border-color 160ms var(--ease-out),
+    background-color 160ms var(--ease-out),
+    box-shadow 160ms var(--ease-out);
+}
+
+.upload-field:focus-within .upload-dropzone,
+.upload-field.is-dragover .upload-dropzone {
+  border-color: var(--accent);
+  background: #fbfdff;
+  box-shadow: var(--shadow-focus);
+}
+
+.upload-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.upload-copy strong {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.upload-copy span {
+  color: var(--text-soft);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.upload-button {
+  width: fit-content;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-xs);
+  color: var(--text);
+  background: var(--surface-soft);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.upload-status {
+  min-height: 18px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
 }
 
 .file-preview {
   grid-column: span 6;
   display: grid;
-  gap: 10px;
-  min-height: 180px;
-  padding: 10px;
+  gap: 12px;
+  min-height: 220px;
+  padding: 12px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--surface-soft);
+  border-radius: var(--radius-md);
+  background: #ffffff;
   box-shadow: var(--shadow-control);
 }
 
@@ -551,7 +628,7 @@ h3 {
 
 .file-preview-title {
   display: grid;
-  gap: 2px;
+  gap: 4px;
   min-width: 0;
 }
 
@@ -568,6 +645,27 @@ h3 {
   color: var(--muted);
   font-size: 12px;
   font-weight: 650;
+}
+
+.file-preview-status {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: var(--success);
+  background: rgb(22 143 87 / 0.1);
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.file-preview-status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
 }
 
 .file-preview-clear {
@@ -822,6 +920,16 @@ h3 {
   .span-2 {
     grid-column: auto;
   }
+
+  .upload-dropzone {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .upload-icon {
+    width: 50px;
+    height: 50px;
+  }
 }
   </style>
 </head>
@@ -829,10 +937,12 @@ h3 {
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand">
-        <div class="brand-mark" aria-hidden="true">B</div>
+        <div class="brand-mark" aria-hidden="true">
+          <img src="https://org23b93544.crm2.dynamics.com/WebResources/cr40f_LogoBetinhosB" alt="">
+        </div>
         <div class="brand-text">
           <p class="eyebrow">Betinhos Executive Service</p>
-          <h1>Cadastro de CurrÃ­culos</h1>
+          <h1>Cadastro de Currículos</h1>
         </div>
       </div>
 
@@ -847,7 +957,7 @@ h3 {
       </div>
     </header>
 
-    <nav class="tabs" aria-label="SeÃ§Ãµes do formulÃ¡rio">
+    <nav class="tabs" aria-label="Seções do formulário">
       <button class="tab is-active" type="button" data-section="dados" aria-current="page">
         <span class="tab-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M8 5h8M8 9h8M8 13h5M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"></path></svg>
@@ -873,14 +983,14 @@ h3 {
         <section id="dados" class="panel is-active" data-panel="dados">
           <div class="section-head">
             <h2>Dados do candidato</h2>
-            <p>InformaÃ§Ãµes bÃ¡sicas para identificar e contatar o candidato.</p>
+            <p>Informações básicas para identificar e contatar o candidato.</p>
           </div>
 
           <section class="form-section">
             <div class="form-section-title" data-step="01">
               <div>
-                <h3>IdentificaÃ§Ã£o</h3>
-                <p>Campos mÃ­nimos para criaÃ§Ã£o do registro.</p>
+                <h3>Identificação</h3>
+                <p>Campos mínimos para criação do registro.</p>
               </div>
             </div>
             <div class="form-grid">
@@ -919,14 +1029,14 @@ h3 {
         <section id="profissional" class="panel" data-panel="profissional">
           <div class="section-head">
             <h2>Perfil profissional</h2>
-            <p>ExperiÃªncia, disponibilidade e triagem operacional.</p>
+            <p>Experiência, disponibilidade e triagem operacional.</p>
           </div>
 
           <section class="form-section">
             <div class="form-section-title" data-step="02">
               <div>
-                <h3>ExperiÃªncia e interesse</h3>
-                <p>Use texto objetivo. Isso vira histÃ³rico de anÃ¡lise.</p>
+                <h3>Experiência e interesse</h3>
+                <p>Use texto objetivo. Isso vira histórico de análise.</p>
               </div>
             </div>
             <div class="form-grid">
@@ -935,20 +1045,20 @@ h3 {
                 <input id="cargoInteresse" name="cargoInteresse" type="text" required>
               </label>
               <label class="field">
-                <span>Ãšltimo cargo</span>
+                <span>Último cargo</span>
                 <input id="ultimoCargo" name="ultimoCargo" type="text">
               </label>
               <label class="field">
-                <span>Ãšltima empresa</span>
+                <span>Última empresa</span>
                 <input id="ultimaEmpresa" name="ultimaEmpresa" type="text">
               </label>
               <label class="field">
-                <span>PretensÃ£o salarial</span>
+                <span>Pretensão salarial</span>
                 <input id="pretensaoSalarial" name="pretensaoSalarial" type="number" min="0" step="0.01">
               </label>
               <label class="field">
                 <span>Nota</span>
-                <input id="nota" name="nota" type="number" min="0" max="10" step="1" inputmode="numeric">
+                <input id="nota" name="nota" type="number" min="0" max="10" step="0.1" inputmode="decimal">
               </label>
               <label class="field">
                 <span>Disponibilidade</span>
@@ -959,11 +1069,11 @@ h3 {
                 <select id="categoriaCnh" name="categoriaCnh"></select>
               </label>
               <label class="field span-2">
-                <span>ExperiÃªncia</span>
+                <span>Experiência</span>
                 <textarea id="experiencia" name="experiencia" rows="5"></textarea>
               </label>
               <label class="field span-2">
-                <span>ObservaÃ§Ãµes internas</span>
+                <span>Observações internas</span>
                 <textarea id="observacoes" name="observacoes" rows="5"></textarea>
               </label>
             </div>
@@ -973,33 +1083,44 @@ h3 {
         <section id="arquivo" class="panel" data-panel="arquivo">
           <div class="section-head">
             <h2>Origem e arquivo</h2>
-            <p>Registro da fonte e currÃ­culo anexado.</p>
+            <p>Registro da fonte e currículo anexado.</p>
           </div>
 
           <section class="form-section">
             <div class="form-section-title" data-step="03">
               <div>
                 <h3>Triagem e documento</h3>
-                <p>O arquivo serÃ¡ enviado ao Flow quando a URL estiver configurada.</p>
+                <p>O arquivo será enviado ao Flow quando a URL estiver configurada.</p>
               </div>
             </div>
             <div class="form-grid">
               <label class="field">
-                <span>Origem do currÃ­culo</span>
+                <span>Origem do currículo</span>
                 <select id="origemCurriculo" name="origemCurriculo"></select>
               </label>
               <label class="field">
-                <span>Status do currÃ­culo</span>
+                <span>Indicado por</span>
+                <input id="indicadoPor" name="indicadoPor" type="text" autocomplete="off">
+              </label>
+              <label class="field">
+                <span>Status do currículo</span>
                 <select id="statusCurriculo" name="statusCurriculo"></select>
               </label>
               <label class="field span-2">
-                <span>Link do currÃ­culo</span>
+                <span>Link do currículo</span>
                 <input id="linkCurriculo" name="linkCurriculo" type="url">
               </label>
               <label class="field span-2 upload-field">
-                <span>Arquivo do currÃ­culo</span>
+                <span>Arquivo do currículo</span>
                 <input id="arquivoCurriculo" name="arquivoCurriculo" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-                <small id="fileHint">PDF, Word ou imagem. MÃ¡ximo recomendado: 10 MB.</small>
+                <div class="upload-dropzone">
+                  <div class="upload-copy">
+                    <strong>Anexar currículo</strong>
+                    <span id="uploadStatus" class="upload-status">Nenhum arquivo selecionado.</span>
+                  </div>
+                  <span class="upload-button">Selecionar</span>
+                </div>
+                <small id="fileHint">PDF, Word ou imagem. Máximo recomendado: 10 MB.</small>
               </label>
               <section id="filePreview" class="file-preview span-2" aria-live="polite" hidden></section>
             </div>
@@ -1020,7 +1141,7 @@ h3 {
     <div id="successOverlay" class="overlay" hidden>
       <div class="dialog success-dialog">
         <strong>Cadastro enviado</strong>
-        <p id="successMessage">CurrÃ­culo registrado com sucesso.</p>
+        <p id="successMessage">Currículo registrado com sucesso.</p>
         <button id="closeSuccess" type="button" class="primary-action">OK</button>
       </div>
     </div>
@@ -1047,6 +1168,7 @@ h3 {
       ultimaEmpresa: "new_ultimaempresa",
       pretensaoSalarial: "new_pretensaosalarial",
       nota: "new_nota",
+      indicadoPor: "new_indicadopor",
       disponibilidade: "new_disponibilidade",
       categoriaCnh: "new_categoriacnh",
       origemCurriculo: "new_origemcurriculo",
@@ -1073,9 +1195,9 @@ h3 {
     disponibilidade: [
       ["", ""],
       [100000000, "Imediata"],
-      [100000001, "AtÃ© 7 dias"],
-      [100000002, "AtÃ© 15 dias"],
-      [100000003, "AtÃ© 30 dias"],
+      [100000001, "Até 7 dias"],
+      [100000002, "Até 15 dias"],
+      [100000003, "Até 30 dias"],
       [100000004, "A combinar"]
     ],
     categoriaCnh: [
@@ -1087,11 +1209,11 @@ h3 {
       [100000004, "E"],
       [100000005, "AB"],
       [100000006, "ACC"],
-      [100000007, "NÃ£o informado"]
+      [100000007, "Não informado"]
     ],
     origemCurriculo: [
       ["", ""],
-      [100000000, "IndicaÃ§Ã£o"],
+      [100000000, "Indicação"],
       [100000001, "WhatsApp"],
       [100000002, "Site"],
       [100000003, "LinkedIn"],
@@ -1101,7 +1223,7 @@ h3 {
     ],
     statusCurriculo: [
       [100000000, "Novo"],
-      [100000001, "Em anÃ¡lise"],
+      [100000001, "Em análise"],
       [100000002, "Aprovado para banco"],
       [100000003, "Reprovado"],
       [100000004, "Contratado"]
@@ -1126,6 +1248,8 @@ h3 {
     successMessage: $("successMessage"),
     closeSuccess: $("closeSuccess"),
     arquivoCurriculo: $("arquivoCurriculo"),
+    uploadField: document.querySelector(".upload-field"),
+    uploadStatus: $("uploadStatus"),
     filePreview: $("filePreview")
   };
 
@@ -1166,8 +1290,38 @@ h3 {
     $("telefone").addEventListener("input", maskPhone);
     $("whatsapp").addEventListener("input", maskPhone);
     el.arquivoCurriculo.addEventListener("change", renderFilePreview);
+    bindUploadDropzone();
     $("estado").addEventListener("input", (event) => {
       event.target.value = event.target.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 2);
+    });
+  }
+
+  function bindUploadDropzone() {
+    if (!el.uploadField) return;
+
+    ["dragenter", "dragover"].forEach((eventName) => {
+      el.uploadField.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        el.uploadField.classList.add("is-dragover");
+      });
+    });
+
+    ["dragleave", "drop"].forEach((eventName) => {
+      el.uploadField.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        el.uploadField.classList.remove("is-dragover");
+      });
+    });
+
+    el.uploadField.addEventListener("drop", (event) => {
+      const file = event.dataTransfer?.files?.[0];
+      if (!file) return;
+
+      const transfer = new DataTransfer();
+      transfer.items.add(file);
+      el.arquivoCurriculo.files = transfer.files;
+      renderFilePreview();
+      saveDraft();
     });
   }
 
@@ -1250,6 +1404,9 @@ h3 {
       fillOptions();
       activatePanel("dados");
       toast(submission.toastMessage, "success");
+      notifyHostSubmitted();
+      refreshHostGrid();
+      closeWebResourceAfterSubmit();
     } catch (error) {
       console.error(error);
       toast(error.message || "Falha ao enviar cadastro.", "error", 9000);
@@ -1267,7 +1424,7 @@ h3 {
       const panel = firstInvalid.closest(".panel");
       if (panel) activatePanel(panel.dataset.panel);
       firstInvalid.focus({ preventScroll: false });
-      toast("Preencha os campos obrigatÃ³rios.", "error");
+      toast("Preencha os campos obrigatórios.", "error");
       return false;
     }
 
@@ -1297,6 +1454,7 @@ h3 {
       [f.ultimaEmpresa]: value("ultimaEmpresa"),
       [f.pretensaoSalarial]: numberValue("pretensaoSalarial"),
       [f.nota]: numberValue("nota"),
+      [f.indicadoPor]: value("indicadoPor"),
       [f.disponibilidade]: optionValue("disponibilidade"),
       [f.categoriaCnh]: optionValue("categoriaCnh"),
       [f.origemCurriculo]: optionValue("origemCurriculo"),
@@ -1345,13 +1503,13 @@ h3 {
       await updateRecordLink(pending.recordId, pending.webUrl);
       return {
         recordId: pending.recordId,
-        message: "Cadastro retomado e link do currÃ­culo gravado sem duplicar o upload.",
-        toastMessage: "Cadastro concluÃ­do sem duplicar o registro."
+        message: "Cadastro retomado e link do currículo gravado sem duplicar o upload.",
+        toastMessage: "Cadastro concluído sem duplicar o registro."
       };
     }
 
     if (pending.fileName && !el.arquivoCurriculo.files[0]) {
-      throw new Error(`Esse cadastro jÃ¡ foi criado e estÃ¡ aguardando o arquivo "${pending.fileName}". Anexe o arquivo para concluir sem duplicar o registro.`);
+      throw new Error(`Esse cadastro já foi criado e está aguardando o arquivo "${pending.fileName}". Anexe o arquivo para concluir sem duplicar o registro.`);
     }
 
     return continueSubmission(pending.recordId, payload, payloadSignature, true);
@@ -1380,21 +1538,21 @@ h3 {
           : "Cadastro retomado e arquivo enviado sem duplicar o registro."
         : uploadResult.message,
       toastMessage: resumed
-        ? "Cadastro concluÃ­do sem duplicar o registro."
-        : "CurrÃ­culo registrado."
+        ? "Cadastro concluído sem duplicar o registro."
+        : "Currículo registrado."
     };
   }
 
   async function handleUpload(recordId, payload) {
     const file = el.arquivoCurriculo.files[0];
     if (!file) {
-      return { uploaded: false, message: "CurrÃ­culo registrado sem arquivo anexado." };
+      return { uploaded: false, message: "Currículo registrado sem arquivo anexado." };
     }
 
     if (!CONFIG.flowUploadUrl) {
       return {
         uploaded: false,
-        message: "CurrÃ­culo registrado. Upload pendente: configure a URL do Flow em CONFIG.flowUploadUrl."
+        message: "Currículo registrado. Upload pendente: configure a URL do Flow em CONFIG.flowUploadUrl."
       };
     }
 
@@ -1410,6 +1568,7 @@ h3 {
       candidateName: payload[CONFIG.fields.nomeCompleto] || "",
       candidateEmail: payload[CONFIG.fields.email] || "",
       cargoInteresse: payload[CONFIG.fields.cargoInteresse] || "",
+      indicadoPor: payload[CONFIG.fields.indicadoPor] || "",
       uploadedBy: getCurrentUserName(),
       uploadedAt: new Date().toISOString()
     };
@@ -1431,8 +1590,8 @@ h3 {
       webUrl: result.webUrl || "",
       driveItemId: result.driveItemId || "",
       message: result.webUrl
-        ? "CurrÃ­culo registrado, arquivo enviado ao Flow e link gravado no cadastro."
-        : "CurrÃ­culo registrado e arquivo enviado ao Flow."
+        ? "Currículo registrado, arquivo enviado ao Flow e link gravado no cadastro."
+        : "Currículo registrado e arquivo enviado ao Flow."
     };
   }
 
@@ -1495,9 +1654,9 @@ h3 {
 
   function getCurrentUserName() {
     try {
-      return state.xrm?.Utility?.getGlobalContext?.().userSettings?.userName || "UsuÃ¡rio nÃ£o identificado";
+      return state.xrm?.Utility?.getGlobalContext?.().userSettings?.userName || "Usuário não identificado";
     } catch (_) {
-      return "UsuÃ¡rio nÃ£o identificado";
+      return "Usuário não identificado";
     }
   }
 
@@ -1515,7 +1674,7 @@ h3 {
     const pending = readPendingSubmission();
     if (!pending) return;
 
-    toast("Existe um cadastro pendente de conclusÃ£o. Reenvie este mesmo candidato para continuar sem duplicar o registro.", "warning", 8000);
+    toast("Existe um cadastro pendente de conclusão. Reenvie este mesmo candidato para continuar sem duplicar o registro.", "warning", 8000);
   }
 
   function findPendingSubmission(payloadSignature) {
@@ -1616,6 +1775,7 @@ h3 {
 
     if (!file) {
       el.filePreview.hidden = true;
+      updateUploadStatus();
       return;
     }
 
@@ -1626,24 +1786,29 @@ h3 {
     let previewMarkup = "";
 
     if (canPreviewImage) {
-      previewMarkup = `<img src="${previewUrl}" alt="Preview do currÃ­culo anexado">`;
+      previewMarkup = `<img src="${previewUrl}" alt="Preview do currículo anexado">`;
     } else if (canPreviewPdf) {
-      previewMarkup = `<iframe src="${previewUrl}" title="Preview do currÃ­culo em PDF"></iframe>`;
+      previewMarkup = `<iframe src="${previewUrl}" title="Preview do currículo em PDF"></iframe>`;
     } else {
-      previewMarkup = `<div class="file-preview-fallback">Preview visual indisponÃ­vel para este tipo de arquivo. O arquivo serÃ¡ enviado normalmente.</div>`;
+      previewMarkup = `<div class="file-preview-fallback">Preview visual indisponível para este tipo de arquivo. O arquivo será enviado normalmente.</div>`;
     }
 
     el.filePreview.innerHTML = `
       <div class="file-preview-head">
         <div class="file-preview-title">
           <strong>${escapeHtml(file.name)}</strong>
-          <span>${escapeHtml(file.type || "Arquivo")} Â· ${size}</span>
+          <span>${escapeHtml(file.type || "Arquivo")} · ${size}</span>
         </div>
         <button class="file-preview-clear" type="button">Remover</button>
       </div>
       <div class="file-preview-body">${previewMarkup}</div>
     `;
     el.filePreview.hidden = false;
+    el.filePreview.querySelector(".file-preview-title").insertAdjacentHTML(
+      "beforeend",
+      '<span class="file-preview-status">Arquivo pronto para envio</span>'
+    );
+    updateUploadStatus(file);
     el.filePreview.querySelector(".file-preview-clear").addEventListener("click", () => {
       el.arquivoCurriculo.value = "";
       clearFilePreview();
@@ -1658,6 +1823,14 @@ h3 {
     previewUrl = "";
     el.filePreview.replaceChildren();
     el.filePreview.hidden = true;
+    updateUploadStatus();
+  }
+
+  function updateUploadStatus(file = null) {
+    if (!el.uploadStatus) return;
+    el.uploadStatus.textContent = file
+      ? `${file.name} selecionado (${formatBytes(file.size)}).`
+      : "Nenhum arquivo selecionado.";
   }
 
   function formatBytes(bytes) {
@@ -1693,10 +1866,65 @@ h3 {
     el.loadingOverlay.hidden = !active;
   }
 
+  function refreshHostGrid() {
+    const scopes = [window.parent, window.top, window.opener].filter(Boolean);
+
+    for (const scope of scopes) {
+      try {
+        const grid = scope.Xrm?.Page?.getControl?.("grid");
+        if (grid && typeof grid.refresh === "function") {
+          grid.refresh();
+          return true;
+        }
+      } catch (_) {
+        continue;
+      }
+    }
+
+    return false;
+  }
+
+  function notifyHostSubmitted() {
+    const message = {
+      type: "betinhos-curriculo-submitted",
+      tableLogicalName: CONFIG.tableLogicalName,
+      submittedAt: new Date().toISOString()
+    };
+
+    [window.parent, window.top, window.opener].filter(Boolean).forEach((target) => {
+      try {
+        target.postMessage(message, "*");
+      } catch (_) {
+        // Ignora hosts que bloqueiam postMessage.
+      }
+    });
+  }
+
+  function closeWebResourceAfterSubmit() {
+    window.setTimeout(() => {
+      try {
+        window.close();
+      } catch (_) {
+        // O host do Model-driven App pode bloquear fechamento direto.
+      }
+
+      [window.parent, window.top].filter(Boolean).forEach((scope) => {
+        try {
+          const closeButton = scope.document.querySelector(
+            'button[aria-label="Close"], button[aria-label="Fechar"], [data-id="dialogCloseIconButton"]'
+          );
+          closeButton?.click?.();
+        } catch (_) {
+          // Cross-frame ou host sem botão acessível.
+        }
+      });
+    }, 1000);
+  }
+
   function toast(message, type = "success", timeout = 4500) {
     const item = document.createElement("div");
     item.className = `toast ${type}`;
-    item.innerHTML = `<span class="toast-message"></span><button class="toast-close" type="button" aria-label="Fechar">Ã—</button>`;
+    item.innerHTML = `<span class="toast-message"></span><button class="toast-close" type="button" aria-label="Fechar">x</button>`;
     item.querySelector(".toast-message").textContent = message;
     item.querySelector(".toast-close").addEventListener("click", () => item.remove());
     el.toastStack.appendChild(item);
