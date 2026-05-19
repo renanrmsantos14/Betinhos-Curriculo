@@ -308,6 +308,9 @@ h3 {
 .content {
   grid-area: content;
   min-height: 0;
+  display: grid;
+  gap: 8px;
+  padding: 8px;
   position: relative;
   z-index: 1;
   border: 1px solid var(--line);
@@ -317,12 +320,12 @@ h3 {
 }
 
 .panel {
-  display: none;
-  padding: 12px;
+  display: block;
+  padding: 10px;
+  scroll-margin-top: 118px;
 }
 
 .panel.is-active {
-  display: block;
   animation: panel-in 220ms var(--ease-out) both;
 }
 
@@ -1274,6 +1277,7 @@ h3 {
                 <div class="upload-dropzone">
                   <div class="upload-copy">
                     <strong>Anexar currículo</strong>
+                    <span>Selecione, arraste ou cole com Ctrl+V.</span>
                     <span id="uploadStatus" class="upload-status">Nenhum arquivo selecionado.</span>
                   </div>
                   <span class="upload-button">Selecionar</span>
@@ -1451,6 +1455,7 @@ h3 {
     $("whatsapp").addEventListener("input", maskPhone);
     el.arquivoCurriculo.addEventListener("change", renderFilePreview);
     bindUploadDropzone();
+    document.addEventListener("paste", handlePasteFile);
     $("estado").addEventListener("input", (event) => {
       event.target.value = event.target.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 2);
     });
@@ -1477,12 +1482,34 @@ h3 {
       const file = event.dataTransfer?.files?.[0];
       if (!file) return;
 
-      const transfer = new DataTransfer();
-      transfer.items.add(file);
-      el.arquivoCurriculo.files = transfer.files;
-      renderFilePreview();
-      saveDraft();
+      setSelectedFile(file);
     });
+  }
+
+  function handlePasteFile(event) {
+    const file = [...(event.clipboardData?.files || [])].find(isAcceptedFile);
+    if (!file) return;
+
+    event.preventDefault();
+    activatePanel("arquivo");
+    setSelectedFile(file);
+    toast(`Arquivo colado: ${file.name}`, "success", 3500);
+  }
+
+  function setSelectedFile(file) {
+    const transfer = new DataTransfer();
+    transfer.items.add(file);
+    el.arquivoCurriculo.files = transfer.files;
+    renderFilePreview();
+    saveDraft();
+  }
+
+  function isAcceptedFile(file) {
+    if (!file) return false;
+    const name = file.name.toLowerCase();
+    const acceptedExtensions = [".pdf", ".doc", ".docx", ".png", ".jpg", ".jpeg"];
+    return acceptedExtensions.some((extension) => name.endsWith(extension)) ||
+      ["application/pdf", "image/png", "image/jpeg"].includes(file.type);
   }
 
   function updateMode() {
@@ -1521,9 +1548,9 @@ h3 {
       if (active) tab.setAttribute("aria-current", "page");
       else tab.removeAttribute("aria-current");
     });
-    el.panels.forEach((panel) => {
-      panel.classList.toggle("is-active", panel.dataset.panel === section);
-    });
+    const panel = el.panels.find((item) => item.dataset.panel === section);
+    panel?.classList.add("is-active");
+    panel?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function fillOptions() {
