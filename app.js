@@ -20,8 +20,6 @@
       nota: "new_nota",
       disponibilidade: "new_disponibilidade",
       categoriaCnh: "new_categoriacnh",
-      experienciaExecutivo: "new_temexperienciaexecutivo",
-      cursoMopp: "new_temcursomopp",
       origemCurriculo: "new_origemcurriculo",
       statusCurriculo: "new_statuscurriculo",
       linkCurriculo: "new_linkcurriculo",
@@ -70,13 +68,13 @@
 
   const DRAFT_KEY = "betinhos_curriculo_draft_v1";
   const MOCK_KEY = "betinhos_curriculo_mock_records_v1";
+  const PENDING_SUBMISSION_KEY = "betinhos_curriculo_pending_submission_v1";
 
   const $ = (id) => document.getElementById(id);
   const el = {
     form: $("curriculoForm"),
     submitButton: $("submitButton"),
     submitButtonText: $("submitButtonText"),
-    clearButton: $("clearButton"),
     modeText: $("modeText"),
     tabs: [...document.querySelectorAll(".tab")],
     panels: [...document.querySelectorAll(".panel")],
@@ -106,6 +104,7 @@
     bindEvents();
     restoreDraft();
     updateMode();
+    notifyPendingSubmission();
   }
 
   function bindEvents() {
@@ -116,7 +115,6 @@
     el.form.addEventListener("submit", handleSubmit);
     el.form.addEventListener("input", saveDraft);
     el.form.addEventListener("change", saveDraft);
-    el.clearButton.addEventListener("click", clearForm);
     el.closeSuccess.addEventListener("click", () => {
       el.successOverlay.hidden = true;
     });
@@ -176,23 +174,17 @@
 
     try {
       const payload = buildDataversePayload();
-      const record = state.mockMode
-        ? saveMockRecord(payload)
-        : await state.xrm.WebApi.createRecord(CONFIG.tableLogicalName, payload);
+      const submission = await submitWithRetrySafety(payload);
 
-      const recordId = record.id || record.recordId;
-      const uploadResult = await handleUpload(recordId, payload);
-      if (uploadResult.webUrl) {
-        await updateRecordLink(recordId, uploadResult.webUrl);
-      }
       localStorage.removeItem(DRAFT_KEY);
-      el.successMessage.textContent = uploadResult.message;
+      clearPendingSubmission(submission.recordId);
+      el.successMessage.textContent = submission.message;
       el.successOverlay.hidden = false;
       el.form.reset();
       clearFilePreview();
       fillOptions();
       activatePanel("dados");
-      toast("Currículo registrado.", "success");
+      toast(submission.toastMessage, "success");
     } catch (error) {
       console.error(error);
       toast(error.message || "Falha ao enviar cadastro.", "error", 9000);
@@ -242,8 +234,6 @@
       [f.nota]: numberValue("nota"),
       [f.disponibilidade]: optionValue("disponibilidade"),
       [f.categoriaCnh]: optionValue("categoriaCnh"),
-      [f.experienciaExecutivo]: $("experienciaExecutivo").checked,
-      [f.cursoMopp]: $("cursoMopp").checked,
       [f.origemCurriculo]: optionValue("origemCurriculo"),
       [f.statusCurriculo]: optionValue("statusCurriculo") ?? 100000000,
       [f.linkCurriculo]: value("linkCurriculo"),
@@ -257,6 +247,77 @@
     });
 
     return payload;
+  }
+
+  async function submitWithRetrySafety(payload) {
+    const payloadSignature = buildPayloadSignature(payload);
+    const pending = findPendingSubmission(payloadSignature);
+
+    if (pending) {
+      return resumePendingSubmission(pending, payload, payloadSignature);
+    }
+
+    const record = state.mockMode
+      ? saveMockRecord(payload)
+      : await state.xrm.WebApi.createRecord(CONFIG.tableLogicalName, payload);
+    const recordId = record.id || record.recordId;
+
+    if (el.arquivoCurriculo.files[0]) {
+      savePendingSubmission({
+        recordId,
+        payloadSignature,
+        phase: "record-created",
+        fileName: el.arquivoCurriculo.files[0].name,
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    return continueSubmission(recordId, payload, payloadSignature, false);
+  }
+
+  async function resumePendingSubmission(pending, payload, payloadSignature) {
+    if (pending.phase === "upload-completed" && pending.webUrl) {
+      await updateRecordLink(pending.recordId, pending.webUrl);
+      return {
+        recordId: pending.recordId,
+        message: "Cadastro retomado e link do currículo gravado sem duplicar o upload.",
+        toastMessage: "Cadastro concluído sem duplicar o registro."
+      };
+    }
+
+    if (pending.fileName && !el.arquivoCurriculo.files[0]) {
+      throw new Error(`Esse cadastro já foi criado e está aguardando o arquivo "${pending.fileName}". Anexe o arquivo para concluir sem duplicar o registro.`);
+    }
+
+    return continueSubmission(pending.recordId, payload, payloadSignature, true);
+  }
+
+  async function continueSubmission(recordId, payload, payloadSignature, resumed) {
+    const uploadResult = await handleUpload(recordId, payload);
+
+    if (uploadResult.webUrl) {
+      savePendingSubmission({
+        recordId,
+        payloadSignature,
+        phase: "upload-completed",
+        fileName: el.arquivoCurriculo.files[0] ? el.arquivoCurriculo.files[0].name : "",
+        webUrl: uploadResult.webUrl,
+        uploadedAt: new Date().toISOString()
+      });
+      await updateRecordLink(recordId, uploadResult.webUrl);
+    }
+
+    return {
+      recordId,
+      message: resumed && uploadResult.uploaded
+        ? uploadResult.webUrl
+          ? "Cadastro retomado, arquivo enviado e link gravado sem duplicar o registro."
+          : "Cadastro retomado e arquivo enviado sem duplicar o registro."
+        : uploadResult.message,
+      toastMessage: resumed
+        ? "Cadastro concluído sem duplicar o registro."
+        : "Currículo registrado."
+    };
   }
 
   async function handleUpload(recordId, payload) {
@@ -375,6 +436,58 @@
     }
   }
 
+  function buildPayloadSignature(payload) {
+    const normalized = {};
+    Object.keys(payload)
+      .sort()
+      .forEach((key) => {
+        normalized[key] = payload[key];
+      });
+    return JSON.stringify(normalized);
+  }
+
+  function notifyPendingSubmission() {
+    const pending = readPendingSubmission();
+    if (!pending) return;
+
+    toast("Existe um cadastro pendente de conclusão. Reenvie este mesmo candidato para continuar sem duplicar o registro.", "warning", 8000);
+  }
+
+  function findPendingSubmission(payloadSignature) {
+    const pending = readPendingSubmission();
+    if (!pending) return null;
+    return pending.payloadSignature === payloadSignature ? pending : null;
+  }
+
+  function readPendingSubmission() {
+    try {
+      const raw = localStorage.getItem(PENDING_SUBMISSION_KEY);
+      if (!raw) return null;
+
+      const pending = JSON.parse(raw);
+      if (!pending || typeof pending.recordId !== "string" || typeof pending.payloadSignature !== "string") {
+        localStorage.removeItem(PENDING_SUBMISSION_KEY);
+        return null;
+      }
+
+      return pending;
+    } catch (_) {
+      localStorage.removeItem(PENDING_SUBMISSION_KEY);
+      return null;
+    }
+  }
+
+  function savePendingSubmission(pending) {
+    localStorage.setItem(PENDING_SUBMISSION_KEY, JSON.stringify(pending));
+  }
+
+  function clearPendingSubmission(recordId) {
+    const pending = readPendingSubmission();
+    if (!pending || !recordId || pending.recordId === recordId) {
+      localStorage.removeItem(PENDING_SUBMISSION_KEY);
+    }
+  }
+
   function saveDraft() {
     const draft = {};
     [...el.form.elements].forEach((control) => {
@@ -396,14 +509,6 @@
     } catch (_) {
       localStorage.removeItem(DRAFT_KEY);
     }
-  }
-
-  function clearForm() {
-    el.form.reset();
-    clearFilePreview();
-    localStorage.removeItem(DRAFT_KEY);
-    activatePanel("dados");
-    toast("Formulário limpo.", "success");
   }
 
   function renderFilePreview() {

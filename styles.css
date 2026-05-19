@@ -603,17 +603,6 @@ h3 {
   text-align: center;
 }
 
-.footer-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 12px;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--surface-soft);
-}
-
 .toast-stack {
   position: fixed;
   right: 16px;
@@ -826,7 +815,4 @@ h3 {
     grid-column: auto;
   }
 
-  .footer-actions {
-    flex-direction: column-reverse;
-  }
 }

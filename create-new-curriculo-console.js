@@ -79,8 +79,6 @@
     moneyField("new_pretensaosalarial", "new_PretensaoSalarial", "Pretensão salarial"),
     picklistField("new_disponibilidade", "new_Disponibilidade", "Disponibilidade", OPTION_VALUES.disponibilidade),
     picklistField("new_categoriacnh", "new_CategoriaCNH", "Categoria CNH", OPTION_VALUES.cnh),
-    booleanField("new_temexperienciaexecutivo", "new_TemExperienciaExecutivo", "Tem experiência com executivo"),
-    booleanField("new_temcursomopp", "new_TemCursoMOPP", "Tem curso MOPP"),
     picklistField("new_origemcurriculo", "new_OrigemCurriculo", "Origem do currículo", OPTION_VALUES.origem),
     picklistField("new_statuscurriculo", "new_StatusCurriculo", "Status do currículo", OPTION_VALUES.status),
     stringField("new_linkcurriculo", "new_LinkCurriculo", "Link do currículo", 500, "Url"),
